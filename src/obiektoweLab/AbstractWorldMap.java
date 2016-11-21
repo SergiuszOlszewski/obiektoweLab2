@@ -1,22 +1,14 @@
 package obiektoweLab;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class RectangularMap implements IWorldMap {
+public abstract class AbstractWorldMap implements IWorldMap{
 
-    List<Car> cars;
-    Position zero = new Position(0,0);
-    Position max;
-
-    RectangularMap(int width, int height){
-        this.max = new Position(width,height);
-        this.cars = new ArrayList<>();
-    }
+    protected List<Car> cars = new ArrayList<>();
 
     @Override
     public boolean canMoveTo(Position position) {
-        return position.greater(this.zero) && position.smaller(this.max) && !isOccupied(position);
+        return !isOccupied(position);
     }
 
     @Override
@@ -43,21 +35,19 @@ public class RectangularMap implements IWorldMap {
     @Override
     public Object objectAt(Position position) {
         for(Car car : cars){
-            if(car.getPosition() == position) return car;
+            if(car.getPosition().equals(position)) return car;
         }
         return null;
     }
 
     @Override
     public String toString(){
-        StringBuilder out = new StringBuilder();
-        out.append(new MapVisualizer().dump(this,zero,max));
-        for(Car car : cars){
-            out.append(car.toString());
-            out.append(car.getPosition());
-            out.append(isOccupied(car.getPosition()));
-            out.append("\n");
-        }
-        return out.toString();
+        return new MapVisualizer().dump(this,getLowerLeft(),getUpperRight());
     }
+
+    abstract protected Position getLowerLeft();
+
+    abstract protected Position getUpperRight();
+
+
 }
